@@ -4,31 +4,21 @@ import os
 from django.conf import settings
 
 def detect_product(image_path):
-    """
-    Detect product from image using Google Vision API
-    You need to set up Google Cloud credentials first:
-    1. Create a service account at https://console.cloud.google.com
-    2. Download JSON key file
-    3. Set environment variable: GOOGLE_APPLICATION_CREDENTIALS=path/to/key.json
-    """
+
     try:
         from google.cloud import vision
         import io
         
-        # Initialize client
         client = vision.ImageAnnotatorClient()
         
-        # Read image
         with io.open(image_path, 'rb') as image_file:
             content = image_file.read()
         
         image = vision.Image(content=content)
         
-        # Get labels
         response = client.label_detection(image=image)
         labels = response.label_annotations
         
-        # Look for product-related labels
         product_keywords = ['laptop', 'mobile', 'phone', 'smartphone', 'computer', 
                            'electronics', 'gadget', 'camera', 'headphones', 'watch']
         
@@ -37,7 +27,6 @@ def detect_product(image_path):
             if any(keyword in label_desc for keyword in product_keywords):
                 return label.description
         
-        # Fallback to first label if available
         if labels:
             return labels[0].description
         
@@ -45,7 +34,6 @@ def detect_product(image_path):
         
     except Exception as e:
         print(f"Vision API error: {e}")
-        # Fallback to keyword extraction from filename
         filename = os.path.basename(image_path).lower()
         if 'mobile' in filename or 'phone' in filename:
             return "Mobile Phone"
@@ -62,8 +50,6 @@ def fetch_prices(product_name):
     """
     results = []
     
-    # Try multiple APIs for better results
-    # Option 1: RapidAPI Product Search
     try:
         url = "https://real-time-product-search.p.rapidapi.com/search-v2"
         
@@ -86,7 +72,6 @@ def fetch_prices(product_name):
             products = data.get("data", {}).get("products", [])
             
             for item in products[:5]:
-                # Clean up price formatting
                 price = item.get("product_price", "N/A")
                 if price and price != "N/A":
                     price = price.replace('₹', '').strip()
@@ -101,23 +86,19 @@ def fetch_prices(product_name):
     except Exception as e:
         print(f"RapidAPI error: {e}")
     
-    # If no results, provide sample data for testing
     if not results:
         results = get_sample_prices(product_name)
     
-    # Categorize by source
     amazon_products = [p for p in results if 'amazon' in p['link'].lower()]
     flipkart_products = [p for p in results if 'flipkart' in p['link'].lower()]
     other_products = [p for p in results if p not in amazon_products and p not in flipkart_products]
     
-    # Return combined results with priority to Amazon/Flipkart
     return amazon_products + flipkart_products + other_products[:5]
 
 def get_sample_prices(product_name):
     """Return sample data for testing when API fails"""
     product_lower = product_name.lower()
     
-    # Sample data based on product type
     if 'laptop' in product_lower:
         return [
             {
