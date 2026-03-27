@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Comparison - Amazon, Flipkart & More</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #fafafa;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f5f3ff;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .upload-label:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 32px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .product-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .price-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background: #f9fafb;
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: bold;
+            color: #374151;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #059669;
+            margin: 15px 0;
+        }
+        
+        .source-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #4b5563;
+            margin-bottom: 15px;
+        }
+        
+        .view-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .view-link:hover {
+            background: #2563eb;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-image {
+            max-width: 200px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .price-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛍️ Smart Product Compare</h1>
+        <p class="subtitle">Upload a product image to compare prices across Amazon, Flipkart & more</p>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="upload-area">
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+                <label for="imageUpload" class="upload-label">
+                    📁 Choose Image
+                </label>
+                <input type="file" name="image" id="imageUpload" class="file-input" accept="image/*" required>
+                <br>
+                <button type="submit" class="submit-btn">🔍 Compare Prices</button>
+            </form>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px;">Analyzing image and fetching prices...</p>
+        </div>
+        
+        {% if product %}
+            <div class="product-header">
+                <h2>🎯 Detected Product</h2>
+                <p style="font-size: 24px; margin-top: 10px;">{{ product }}</p>
+                {% if image_url %}
+                    <img src="{{ image_url }}" alt="Uploaded product" class="preview-image">
+                {% endif %}
+            </div>
+            
+            <h3>💰 Best Prices from Top Stores</h3>
+            <div class="price-grid">
+                {% for item in prices %}
+                    <div class="price-card">
+                        <div class="card-header">
+                            {% if item.source %}
+                                {{ item.source }}
+                            {% else %}
+                                {% if 'amazon' in item.link %}
+                                    🛒 Amazon
+                                {% elif 'flipkart' in item.link %}
+                                    📱 Flipkart
+                                {% else %}
+                                    🏪 Online Store
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <div class="product-title">{{ item.title }}</div>
+                            <div class="price">{{ item.price }}</div>
+                            {% if item.source %}
+                                <div class="source-badge">{{ item.source }}</div>
+                            {% endif %}
+                            <a href="{{ item.link }}" target="_blank" rel="noopener noreferrer" class="view-link">
+                                🔗 View Deal
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No prices found. Try uploading a clearer image of a product.</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            document.getElementById('loading').style.display = 'block';
+        });
+        
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            if (fileName) {
+                console.log('Selected file:', fileName);
+            }
+        });
+    </script>
+</body>
+</html>

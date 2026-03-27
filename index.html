@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Product Image Comparison</title>
+</head>
+<body>
+
+```
+<h2>Upload Product Image</h2>
+
+<form id="uploadForm">
+    <input type="file" id="imageInput" name="image" required>
+    <br><br>
+    <img id="preview" width="200" style="display:none;"/>
+    <br><br>
+    <button type="submit">Upload</button>
+</form>
+
+<h3>Detected Product:</h3>
+<p id="product"></p>
+
+<h3>Price Comparison:</h3>
+<div id="results"></div>
+
+<script>
+    const imageInput = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+
+    // 🔥 Show image preview
+    imageInput.addEventListener("change", function() {
+        const file = imageInput.files[0];
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    });
+
+    document.getElementById("uploadForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        let formData = new FormData();
+        formData.append("image", imageInput.files[0]);
+
+        fetch("http://127.0.0.1:8000/api/upload/", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Show product name
+            document.getElementById("product").innerText = data.product;
+
+            // Show results
+            let output = "";
+            +
+            data.prices.forEach(item => {
+                output += `
+                    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+                        <h4>${item.title}</h4>
+                        <p><b>Price:</b> ${item.price}</p>
+                        <a href="${item.link}" target="_blank">View Product</a>
+                    </div>
+                `;
+            });
+
+            document.getElementById("results").innerHTML = output;
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    });
+</script>
+```
+
+</body>
+</html>
