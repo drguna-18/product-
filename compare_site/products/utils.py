@@ -126,7 +126,7 @@ def fetch_via_rapidapi(product_name):
         }
         
         headers = {
-            "X-RapidAPI-Key": "f1939124a0mshab8e271db450a6dp1e1f82jsn0a076f5ef626",  # Replace with your actual key
+            "X-RapidAPI-Key": "KEY",  # Replace with your actual key
             "X-RapidAPI-Host": "real-time-product-search.p.rapidapi.com"
         }
         
